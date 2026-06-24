@@ -9,6 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 const swaggerDocument = YAML.load('openapi.yaml');
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(express.json());
 
 app.use(
     OpenApiValidator.middleware({
@@ -30,7 +31,20 @@ app.get('/hello', (req, res) => {
     res.json({ message: 'Hello World!' });
 });
 
+app.post('/users', (req, res) => {
+    const { name, age, email } = req.body;
+    const newUser = {
+        id: Date.now().toString(),
+        name,
+        age,
+        email
+    }
+    res.status(201).json(newUser);
+});
+
 app.listen(PORT, () => {
     console.log(`working app on http://localhost:${PORT}`);
 });
+
+
 
