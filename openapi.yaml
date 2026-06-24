@@ -7,7 +7,7 @@ servers:
   - url: http://localhost:{port}
     variables:
       port:
-        default: 3005
+        default: "3005"
         description: Port number
 paths:
   /hello:
