@@ -9,57 +9,116 @@ servers:
       port:
         default: "3005"
         description: Port number
-components:
-  schemas:
-    HelloResponse:
-      type: object
-    Product:
-      type: object
-      required:
-       - name
-       - price
-       - category
-      properties:
-        name:
-          type: string
-          minLength: 2
-          maxLength: 50
-        description:
-          type: string
-          maxLength: 500
-        price:
-          type: number
-          minimum: 0
-          multipleOf: 0.01
-        category:
-          type: string
-          enum: ["electronics", "books", "clothing", "food"]
-        tags:
-          type: array
-          items:
-            type: string
-          minItems: 1
-        InStock:
-          type: boolean
-        spacifications:
-          type: object
-          additionalProperties:
-            type: string
-        ratings:
-          type: array
-          items:
-          required:
-            - score
-            - comment
-          properties:
-            score:
-              type: integer
-              minimum: 1
-              maximum: 5
-            comment:
-              type: string
-              maxLength: 200
 paths:
+  /products:
+    get:
+      summary: Get all products
+      responses:
+        '200':
+          description: A list of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+    post:
+      summary: Create a new product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Product created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+  /products/{id}:
+    get:
+      summary: Get product by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Product found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    post:
+      summary: Update product by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Product updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    delete:
+      summary: Delete product by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Product deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
   /hello:
     get:
       summary: Get hello message
@@ -202,3 +261,52 @@ components:
         message:
           type: string
           example: Hello World!
+    Product:
+      type: object
+      required:
+        - name
+        - price
+        - category
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          minLength: 2
+          maxLength: 50
+        description:
+          type: string
+          maxLength: 500
+        price:
+          type: number
+          minimum: 0
+          multipleOf: 0.01
+        category:
+          type: string
+          enum: ["electronics", "books", "clothing", "food"]
+        tags:
+          type: array
+          items:
+            type: string
+          minItems: 1
+        InStock:
+          type: boolean
+        spacifications:
+          type: object
+          additionalProperties:
+            type: string
+        ratings:
+          type: array
+          items:
+            type: object
+            required:
+              - score
+              - comment
+            properties:
+              score:
+                type: integer
+                minimum: 1
+                maximum: 5
+              comment:
+                type: string
+                maxLength: 200

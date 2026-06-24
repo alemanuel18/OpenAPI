@@ -31,6 +31,81 @@ app.get('/hello', (req, res) => {
     res.json({ message: 'Hello World!' });
 });
 
+const products = [
+    {
+        id: 1,
+        name: 'Laptop',
+        description: 'A high performance laptop',
+        price: 999.99,
+        category: 'electronics',
+        tags: ['computer', 'portable'],
+        InStock: true,
+        spacifications: {
+            processor: 'Intel i7',
+            ram: '16GB'
+        },
+        ratings: [
+            {
+                score: 5,
+                comment: 'Excellent laptop!'
+            }
+        ]
+    }
+];
+
+app.get('/products', (req, res) => {
+    res.json(products);
+});
+
+app.post('/products', (req, res) => {
+    const newProduct = {
+        id: Date.now(),
+        ...req.body
+    };
+    products.push(newProduct);
+    res.status(201).json(newProduct);
+});
+
+app.get('/products/:id', (req, res) => {
+    const productId = parseInt(req.params.id, 10);
+    const product = products.find(p => p.id === productId);
+    
+    if (!product) {
+        return res.status(404).json({ message: 'Product not found' });
+    }
+    
+    res.json(product);
+});
+
+app.post('/products/:id', (req, res) => {
+    const productId = parseInt(req.params.id, 10);
+    const productIndex = products.findIndex(p => p.id === productId);
+    
+    if (productIndex === -1) {
+        return res.status(404).json({ message: 'Product not found' });
+    }
+    
+    const updatedProduct = {
+        id: productId,
+        ...req.body
+    };
+    
+    products[productIndex] = updatedProduct;
+    res.json(updatedProduct);
+});
+
+app.delete('/products/:id', (req, res) => {
+    const productId = parseInt(req.params.id, 10);
+    const productIndex = products.findIndex(p => p.id === productId);
+    
+    if (productIndex === -1) {
+        return res.status(404).json({ message: 'Product not found' });
+    }
+    
+    products.splice(productIndex, 1);
+    res.json({ message: 'Product deleted' });
+});
+
 const users = [
     {
         id: 1,
