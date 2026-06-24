@@ -1,0 +1,26 @@
+openapi: 3.1.1
+info:
+  title: API First
+  version: 1.0.0
+  description: API First
+servers:
+  - url: http://localhost:3000
+paths:
+  /hello:
+    get:
+      summary: Get hello message
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelloResponse'
+components:
+  schemas:
+    HelloResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Hello World!
