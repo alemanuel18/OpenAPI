@@ -59,6 +59,37 @@ paths:
                     type: integer
                   email:
                     type: string
+  /users/{id}:
+    get:
+      summary: Get userby id
+      parameters:
+        - in: paths
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User found
+          content.
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name: 
+                    type: string
+          '404':
+            description: User not found
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+
 components:
   schemas:
     HelloResponse:
