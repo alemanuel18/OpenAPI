@@ -29,7 +29,7 @@ tags:
      description: Find out more about products
      url: https://openapi.com
 servers:
-  - url: http://localhost:{port}/v1
+  - url: http://localhost:{port}
     description: Version 1 de la API
     variables:
       port:
@@ -318,31 +318,42 @@ components:
       properties:
         id:
           type: integer
+          example: 101
         name:
           type: string
           minLength: 2
           maxLength: 50
+          example: "Sony WH-1000XM4"
         description:
           type: string
           maxLength: 500
+          example: "Wireless noise-canceling headphones with premium sound quality and smart listening control."
         price:
           type: number
           minimum: 0
           multipleOf: 0.01
+          example: 348.00
         category:
           type: string
           enum: ["electronics", "books", "clothing", "food"]
+          example: "electronics"
         tags:
           type: array
           items:
             type: string
           minItems: 1
+          example: ["audio", "headphones", "wireless"]
         InStock:
           type: boolean
+          example: true
         spacifications:
           type: object
           additionalProperties:
             type: string
+          example:
+            battery_life: "30 hours"
+            connectivity: "Bluetooth 5.0"
+            color: "Silver"
         ratings:
           type: array
           items:
@@ -355,6 +366,8 @@ components:
                 type: integer
                 minimum: 1
                 maximum: 5
+                example: 5
               comment:
                 type: string
                 maxLength: 200
+                example: "Best noise-canceling headphones I have ever bought!"
