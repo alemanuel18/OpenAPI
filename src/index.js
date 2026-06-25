@@ -3,6 +3,7 @@ const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const OpenApiValidator = require('express-openapi-validator');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,6 +18,24 @@ app.use(
         validateRequests: true,
         validateResponses: true,
         ignorePaths: /.*\/docs$/,
+        validateSecurities: {
+            handlers: {
+                JWT: async (req, scopes, schema) => {
+                    const authHeader = req.headers.authorization;
+                    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+                        throw { status: 401, message: 'Authorization header is missing or malformed' };
+                    }
+                    const token = authHeader.split(' ')[1];
+                    try {
+                        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecretkey123');
+                        req.user = decoded;
+                        return true;
+                    } catch (err) {
+                        throw { status: 401, message: 'Invalid or expired token' };
+                    }
+                }
+            }
+        }
     })
 );
 
@@ -50,19 +69,21 @@ const users = [
         id: 1,
         name: 'John Doe',
         age: 30,
-        email: 'john@example.com'
+        email: 'john@example.com',
+        password: 'password123'
     }, {
         id: 2,
         name: 'Jane Doe',
         age: 25,
-        email: 'jane@example.com|'
+        email: 'jane@example.com',
+        password: 'password123'
     }, {
         id: 3,
         name: 'Bob Smith',
         age: 35,
-        email: 'bob@example.com'
+        email: 'bob@example.com',
+        password: 'password123'
     }
-
 ];
 
 /* 
@@ -105,14 +126,49 @@ app.post('/users', (req, res) => {
         id: numericId,
         name,
         age,
-        email
+        email,
+        password: 'password123'
     };
     users.push(newUser);
 
     // Return ID as string to comply with the POST /users schema
     res.status(201).json({
-        ...newUser,
-        id: numericId.toString()
+        id: numericId.toString(),
+        name: newUser.name,
+        age: newUser.age,
+        email: newUser.email
+    });
+});
+
+app.post('/users/login', (req, res) => {
+    const { email, password } = req.body;
+    const user = users.find(u => u.email === email && u.password === password);
+
+    if (!user) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    const token = jwt.sign(
+        { id: user.id, name: user.name, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+    );
+
+    res.json({ token });
+});
+
+app.get('/users/me', (req, res) => {
+    const user = users.find(u => u.id === req.user.id);
+
+    if (!user) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    res.json({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        age: user.age
     });
 });
 
@@ -142,6 +198,7 @@ app.post('/users/:id', (req, res) => {
     const { name, age, email } = req.body;
 
     users[userIndex] = {
+        ...users[userIndex],
         id: userId,
         name,
         age,
