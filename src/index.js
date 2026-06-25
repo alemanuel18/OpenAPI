@@ -27,8 +27,16 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.get('/hello', (req, res) => {
+app.get('/v1/hello', (req, res) => {
     res.json({ message: 'Hello World!' });
+});
+
+app.get('/v2/hello', (req, res) => {
+    res.json({
+        message: 'Hello World!',
+        version: 'v2',
+        timestamp: new Date().toISOString()
+    });
 });
 
 /*
@@ -143,10 +151,6 @@ app.post('/users/:id', (req, res) => {
     res.json(users[userIndex]);
 });
 
-app.listen(PORT, () => {
-    console.log(`working app on http://localhost:${PORT}`);
-});
-
 /*
 ###########################################
 CRUD PRODUCTS
@@ -204,4 +208,15 @@ app.delete('/products/:id', (req, res) => {
 
     products.splice(productIndex, 1);
     res.json({ message: 'Product deleted' });
+});
+
+/* 
+###########################################
+LISTEN
+###########################################
+*/
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+    console.log(`http://localhost:${PORT}/v1`)
+    console.log(`http://localhost:${PORT}/v2`);
 });

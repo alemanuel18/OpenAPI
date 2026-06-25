@@ -4,7 +4,14 @@ info:
   version: 1.0.0
   description: API First
 servers:
-  - url: http://localhost:{port}
+  - url: http://localhost:{port}/v1
+    description: Version 1 de la API
+    variables:
+      port:
+        default: "3005"
+        description: Port number
+  - url: http://localhost:{port}/v2
+    description: Version 2 de la API
     variables:
       port:
         default: "3005"
