@@ -1,8 +1,33 @@
 openapi: 3.1.1
 info:
-  title: API First
-  version: 1.0.0
-  description: API First
+  title: FakeAPI Store
+  version: 1.2.3
+  description: |-
+    This is a sample FakeAPI Store Server based on the OpenAPI 3.X specification. 
+    You can find out more about Swagger at [https://swagger.io](https://swagger.io). In the third iteration 
+    of the pet store, we've switched to the design first approach. 
+    You can now help us improve the API whether it's by making changes to the definition 
+    itself or to the code. That way, with time, we can improve the API in general, and 
+    expose some of the new features in OAS3.
+  termsOfService: https://terminos.com
+  contact:
+    name: alemanuel
+    url: https://contacto.com
+    email: alemanuel@example.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+externalDocs:
+  description: Find out mor about FakeAPI Store
+  url: https://github.com/platzi/curso-apifirst
+tags:
+  - name: users
+    description: Operations related to users
+  - name: products
+    description: Operations related to products
+    externalDocs: 
+     description: Find out more about products
+     url: https://openapi.com
 servers:
   - url: http://localhost:{port}/v1
     description: Version 1 de la API
@@ -19,6 +44,8 @@ servers:
 paths:
   /products:
     get:
+      tags:
+        - products
       summary: Get all products
       responses:
         '200':
@@ -30,6 +57,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/Product'
     post:
+      tags:
+        - products
       summary: Create a new product
       requestBody:
         required: true
@@ -46,6 +75,8 @@ paths:
                 $ref: '#/components/schemas/Product'
   /products/{id}:
     get:
+      tags:
+        - products
       summary: Get product by id
       parameters:
         - in: path
@@ -70,6 +101,8 @@ paths:
                   message:
                     type: string
     post:
+      tags:
+        - products
       summary: Update product by id
       parameters:
         - in: path
@@ -100,6 +133,8 @@ paths:
                   message:
                     type: string
     delete:
+      tags:
+        - products
       summary: Delete product by id
       parameters:
         - in: path
@@ -138,6 +173,8 @@ paths:
                 $ref: '#/components/schemas/HelloResponse'
   /users:
     post:
+      tags:
+        - users
       summary: Create a new user
       requestBody:
         required: true
@@ -177,6 +214,8 @@ paths:
                     type: string
   /users/{id}:
     get:
+      tags:
+        - users 
       summary: Get userby id
       parameters:
         - in: path
@@ -206,6 +245,8 @@ paths:
                   message:
                     type: string
     post:
+      tags:
+        - users
       summary: Update usr by id
       parameters:
         - in: path
